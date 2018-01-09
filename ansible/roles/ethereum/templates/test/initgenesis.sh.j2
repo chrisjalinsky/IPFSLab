@@ -1,0 +1,3 @@
+#!/bin/bash -eu
+
+/usr/bin/geth --datadir {{ ethereum_db_data_dir }} init {{ ethereum_db_conf_dir }}/genesis.json

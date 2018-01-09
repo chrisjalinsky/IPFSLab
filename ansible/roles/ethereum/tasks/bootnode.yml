@@ -1,0 +1,6 @@
+---
+
+- name: Ensure bootnode key present
+  shell: "/usr/bin/bootnode --genkey={{ ethereum_db_conf_dir }}/boot.key"
+  args:
+    creates: "{{ ethereum_db_conf_dir }}/boot.key"

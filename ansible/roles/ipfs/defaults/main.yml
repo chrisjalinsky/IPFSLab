@@ -1,0 +1,25 @@
+---
+
+ipfs_version: "0.4.13"
+
+ipfs_name: "ipfs_v{{ ipfs_version }}"
+ipfs_package_name: "go-{{ ipfs_name }}_linux-amd64"
+ipfs_tar_url: "https://dist.ipfs.io/go-ipfs/v{{ ipfs_version }}/{{ ipfs_package_name }}.tar.gz"
+ipfs_parent_dir: "/opt"
+ipfs_tar_dest: "{{ ipfs_parent_dir }}/"
+
+ipfs_user: "fuse"
+ipfs_user_group: "fuse"
+ipfs_user_home: "/home/fuse"
+
+ipfs_api_listen_iface: "0.0.0.0"
+ipfs_gw_listen_iface: "0.0.0.0"
+ipfs_swarm_listen_iface: "0.0.0.0"
+
+# Dependent on vars above
+ipfs_addresses_json:
+  Addresses:
+    Swarm:
+      - "/ip4/{{ ipfs_swarm_listen_iface }}/tcp/4001"
+    API: "/ip4/{{ ipfs_api_listen_iface }}/tcp/5001"
+    Gateway: "/ip4/{{ ipfs_gw_listen_iface }}/tcp/8080"

@@ -1,0 +1,26 @@
+---
+
+- name: Provision ipfs nodes
+  hosts: ethereum_nodes
+  become: yes
+  become_user: root
+  roles:
+    - role: hostsfile
+      hostsfile_iface: "ansible_enp0s8"
+      hostsfile_group: "all"
+    - role: user_role
+      user_role_users:
+        - name: "fuse"
+          shell: "/bin/bash"
+          groups:
+            - "fuse"
+          append: "yes"
+    # dependency install web ui for ipfs
+    - role: nodejs
+    - role: ipfs_webui
+      ipfs_webui_user: "fuse"
+    - role: go
+      go_user: "fuse"
+    #- role: ethereum
+    #- role: ethereum_contracts
+    - role: ipfs

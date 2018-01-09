@@ -1,0 +1,5 @@
+---
+
+go_version: "1.9.2"
+go_user: "vagrant"
+go_user_home: "/home/{{ go_user }}"

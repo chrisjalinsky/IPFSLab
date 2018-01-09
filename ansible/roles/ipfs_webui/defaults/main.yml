@@ -1,0 +1,7 @@
+---
+
+ipfs_webui_git_repo: "https://github.com/ipfs-shipyard/ipfs-webui.git"
+ipfs_webui_git_branch: "master"
+ipfs_webui_parent_dir: "/opt"
+ipfs_webui_home_dir: "{{ ipfs_webui_parent_dir }}/ipfs_webui_v{{ ipfs_webui_git_branch }}"
+ipfs_webui_user: "fuse"

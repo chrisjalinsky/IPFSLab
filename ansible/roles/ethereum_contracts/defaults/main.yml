@@ -1,0 +1,6 @@
+---
+
+ethereum_contracts_templates_list:
+  - src: "simple.sol.j2"
+    dest: "/opt/simple_contract/simple.sol"
+    creates: "/opt/simple_contract/Simple.bin"

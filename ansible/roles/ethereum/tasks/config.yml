@@ -1,0 +1,33 @@
+---
+
+- name: Ensure dirs exist
+  file:
+    dest: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ ethereum_db_conf_dir }}"
+    - "{{ ethereum_db_data_dir }}"
+
+- name: Ensure IPV6 is disabled in sysctl
+  register: disable_ipv6
+  lineinfile:
+    line: "{{ item.line }}"
+    regexp: "{{ item.regexp }}"
+    dest: "/etc/sysctl.conf"
+  with_items:
+    - line: "net.ipv6.conf.all.disable_ipv6=1"
+      regexp: "^net\\.ipv6\\.conf\\.all\\.disable_ipv6=.*"
+    - line: "net.ipv6.conf.default.disable_ipv6=1"
+      regexp: "^net\\.ipv6\\.conf\\.default\\.disable_ipv6=.*"
+    - line: "net.ipv6.conf.lo.disable_ipv6=1"
+      regexp: "^net\\.ipv6\\.conf\\.lo\\.disable_ipv6=.*"
+
+- name: Restart sysctl
+  when: disable_ipv6|changed
+  shell: "sysctl -p"
+
+- name: Template db config files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items: "{{ ethereum_db_templates }}"

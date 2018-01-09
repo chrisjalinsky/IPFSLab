@@ -1,0 +1,11 @@
+---
+
+- name: Init genesis
+  register: etherium_init_genesis
+  shell: "/usr/bin/geth --datadir {{ ethereum_db_data_dir }} init {{ ethereum_db_conf_dir }}/genesis.json"
+  args:
+    creates: "{{ ethereum_db_data_dir }}/geth/chaindata/CURRENT"
+
+- name: Debug etherium_init_genesis
+  debug:
+    var: etherium_init_genesis

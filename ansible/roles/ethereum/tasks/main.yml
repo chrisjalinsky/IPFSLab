@@ -1,0 +1,19 @@
+---
+
+- name: Include install tasks
+  include_tasks: "{{ ethereum_install_method }}.yml"
+
+- name: Include config tasks
+  include_tasks: "config.yml"
+
+- name: Include genesis tasks
+  include_tasks: "genesis.yml"
+
+#- name: Include bootnode tasks
+#  include_tasks: "bootnode.yml"
+
+#- name: Include service tasks
+#  include_tasks: "service.yml"
+
+- name: Include bin scripts
+  include_tasks: "scripts.yml"

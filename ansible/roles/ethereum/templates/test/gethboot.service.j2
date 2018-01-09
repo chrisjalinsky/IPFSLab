@@ -1,0 +1,25 @@
+[Unit]
+Description=Gethboot service
+Documentation=https://souptacular.gitbooks.io/ethereum-tutorials-and-tips-by-hudson/content/private-chain.html
+
+[Service]
+ExecStart=/usr/bin/geth --identity "MyNodeName" \
+  --genesis "{{ ethereum_db_data_dir }}/genesis.json" \
+  --rpc \
+  --rpcport "{{ ethereum_rpc_port }}" \
+  --rpccorsdomain "{{ ethereum_cors_domain }}" \
+  --datadir "{{ ethereum_db_data_dir }}" \
+  --port "{{ ethereum_port }}" \
+{% if not ethereum_discoverable %}
+  --nodiscover \
+{% endif %}
+  --ipcapi "{{ ethereum_ipc_api_list | join(',') }}" \
+  --rpcapi "{{ ethereum_rpc_api_list | join(',') }}" \
+  --autodag \
+  --networkid {{ ethereum_network_id }} \
+  --nat "{{ ethereum_nat }}"
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,155 @@
+---
+
+- name: Ensure package DL and unarchived
+  unarchive:
+    src: "{{ ipfs_tar_url }}"
+    dest: "{{ ipfs_tar_dest }}"
+    remote_src: yes
+    creates: "{{ ipfs_parent_dir }}/go-ipfs/ipfs"
+
+- name: Ensure {{ ipfs_parent_dir }}/go-ipfs/ipfs is executable
+  file:
+    dest: "{{ ipfs_parent_dir }}/go-ipfs/ipfs"
+    mode: "0777"
+
+- name: Symlink ipfs to {{ ipfs_symlink_dest }}
+  file:
+    src: "{{ ipfs_parent_dir }}/go-ipfs/ipfs"
+    dest: "/usr/bin/ipfs"
+    state: link
+
+- name: Install fuse
+  apt:
+    name: fuse
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Ensure fuse group present
+  group:
+    name: "{{ ipfs_user_group }}"
+
+- name: Create fuse ipfs daemon admin system user
+  user:
+    name: "{{ ipfs_user }}"
+    groups: "{{ ipfs_user_group }}"
+    append: yes
+
+- name: Ensure allow others is set in /etc/fuse.conf
+  lineinfile:
+    line: "user_allow_other"
+    regexp: "#?user_allow_other$"
+    dest: "/etc/fuse.conf"
+
+- name: Ensure /etc/fuse.conf is group owned and readable
+  file:
+    dest: /etc/fuse.conf
+    owner: root
+    group: "{{ ipfs_user_group }}"
+    mode: "g+r"
+
+- name: Ensure /ipns and /ipfs dirs present
+  file:
+    dest: "{{ item }}"
+    state: directory
+    owner: "{{ ipfs_user }}"
+    group: "{{ ipfs_user_group }}"
+  with_items:
+    - "/ipfs"
+    - "/ipns"
+
+- name: Ensure ipfs init run by fuse user
+  become_user: "{{ ipfs_user }}"
+  become: yes
+  register: ipfs_init_registration
+  shell: "{{ ipfs_parent_dir }}/go-ipfs/ipfs init"
+  args:
+    creates: "{{ ipfs_user_home }}/.ipfs/datastore/CURRENT"
+
+- debug:
+    var: ipfs_init_registration.stdout
+
+- name: Ensure addresses config snippet present
+  template:
+    src: addresses.json.j2
+    dest: "{{ ipfs_user_home }}/.ipfs/addresses.json"
+    owner: "{{ ipfs_user }}"
+    group: "{{ ipfs_user_group }}"
+
+- name: Read json
+  debug:
+    var: ipfs_addresses_json
+
+# Not using
+##- name: output ipfs_init_registration when present
+##  when: >
+##    ipfs_init_registration is defined and
+##    ipfs_init_registration.stdout is defined
+##  copy:
+##    dest: "{{ ipfs_user_home }}/ipfs_registration_details"
+##    mode: "0600"
+##    content: >
+##      {{ ipfs_init_registration.stdout }}
+
+# Config for fuse mount
+#- name: Ensure ipfs config cmds run
+#  become_user: "{{ ipfs_user }}"
+#  become: yes
+#  shell: "{{ item.shell }}"
+#  with_items:
+#    - shell: "ipfs config --json Mounts.FuseAllowOther true"
+
+#ipfs config --json Addresses.API '"/ip4/0.0.0.0/tcp/5001"'
+#ipfs config --json Addresses.Gateway '"/ip4/0.0.0.0/tcp/8080"'
+#ipfs config --json Addresses.Swarm '["/ip4/0.0.0.0/tcp/4001"]'
+#ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '["*"]'
+
+- name: Ensure template service present
+  template:
+    src: "ipfs-svc.service.j2"
+    dest: "/etc/systemd/system/ipfs-svc.service"
+
+# Disable startup for now
+#- name: Ensure ipfs started
+#  systemd:
+#    name: ipfs-svc
+#    state: started
+
+# Disable for now
+#- name: Wait for default ipfs ports to come up
+#  wait_for:
+#    host: "{{ item.host }}"
+#    port: "{{ item.port }}"
+#    #delay: 10
+#  with_items:
+#    - port: "4001"
+#      host: "0.0.0.0"
+#    - port: "5001"
+#      host: "127.0.0.1"
+#    - port: "8080"
+#      host: "127.0.0.1"
+
+# Disable for now
+#- name: Pause momentarily
+#  pause:
+#    seconds: 5
+
+# Disable for now
+#- name: save list of bootstrap peers
+#  become_user: "{{ ipfs_user }}"
+#  become: yes
+#  shell: "ipfs bootstrap list >bootstrap_peers"
+#  args:
+#    chdir: "{{ ipfs_user_home }}"
+#    #creates: "{{ ipfs_user_home }}/bootstrap_peers"
+
+# Needed to enable private network
+##- name: Remove all bootstrap peers
+##  become_user: "{{ ipfs_user }}"
+##  become: yes
+##  shell: "ipfs bootstrap rm --all"
+
+# enable private by gen swarm keys
+
+#ipfs bootstrap add /ip4/172.16.1.11/tcp/4001/ipfs/QmXFT216sUBtURpVugFh6mgY1wDXh7VZAC8kV9UczUe8SC
+#ipfs bootstrap add /ip4/172.16.1.12/tcp/4001/ipfs/QmbBSGExqdbDgAVyxFp1DtJaE4g83YTSmw1RRWCBgKwM87
+#ipfs bootstrap add /ip4/172.16.1.13/tcp/4001/ipfs/QmcbxSkzmtcKTk4sgnUGFe9gYELLNxNTTTmFgWM9ooZKeH

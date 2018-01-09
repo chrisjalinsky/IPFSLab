@@ -1,0 +1,28 @@
+---
+
+- name: Ensure apt deps
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+    cache_valid_time: 3600
+  with_items:
+    - "solc"
+
+- name: Ensure dirs created
+  file:
+    dest: "{{ item.dest | dirname }}"
+    state: directory
+  with_items: "{{ ethereum_contracts_templates_list }}"
+
+- name: Ensure templates
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items: "{{ ethereum_contracts_templates_list }}"
+
+- name: Compile
+  shell: "solc -o . --bin --abi {{ item.dest }}"
+  args:
+    chdir: "{{ item.dest | dirname }}"
+    creates: "{{ item.creates }}"
+  with_items: "{{ ethereum_contracts_templates_list }}"

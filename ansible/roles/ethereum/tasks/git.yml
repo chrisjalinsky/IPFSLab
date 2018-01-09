@@ -1,0 +1,48 @@
+---
+
+- name: Ensure deps present
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+    cache_valid_time: 3600
+  with_items: "{{ ethereum_git_apt_deps }}"
+
+- name: Ensure parent dir exists
+  file:
+    dest: "{{ ethereum_git_parent_dir }}"
+    state: directory
+
+- name: Clone git
+  git:
+    repo: "https://github.com/ethereum/cpp-ethereum.git"
+    update: no
+    recursive: yes
+    dest: "{{ ethereum_git_dir }}"
+
+- name: Ensure cmake DL and exec created
+  shell: "scripts/install_cmake.sh --prefix /usr/local"
+  args:
+    chdir: "{{ ethereum_git_dir }}"
+    creates: "{{ ethereum_cmake_exec }}"
+
+- name: Ensure additional deps present
+  shell: "scripts/install_deps.sh"
+  args:
+    chdir: "{{ ethereum_git_dir }}"
+
+- name: Ensure build dir exists
+  file:
+    dest: "{{ ethereum_build_dir }}"
+    state: directory
+
+- name: Ensure cmake ran to generate Makefile from build directory (takes awhile)
+  shell: "{{ ethereum_cmake_exec }} .."
+  args:
+    chdir: "{{ ethereum_build_dir }}"
+    creates: "{{ ethereum_build_dir }}/Makefile"
+
+- name: Ensure make ran from build directory (really takes awhile)
+  shell: "make"
+  args:
+    chdir: "{{ ethereum_build_dir }}"
+    creates: "{{ ethereum_build_dir }}/Makefile"

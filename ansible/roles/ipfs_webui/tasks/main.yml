@@ -1,0 +1,28 @@
+---
+
+- name: Ensure git present
+  apt:
+    name: git
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Ensure git repo downloaded
+  git:
+    repo: "{{ ipfs_webui_git_repo }}"
+    version: "{{ ipfs_webui_git_branch }}"
+    update: no
+    dest: "{{ ipfs_webui_home_dir }}"
+
+- name: Ensure directory chowned and chmodded to {{ ipfs_webui_user }}
+  file:
+    dest: "{{ ipfs_webui_home_dir }}"
+    owner: "{{ ipfs_webui_user }}"
+    mode: "0775"
+    recurse: yes
+    state: directory
+
+- name: Npm install
+  shell: "npm install"
+  args:
+    chdir: "{{ ipfs_webui_home_dir }}"
+    creates: "{{ ipfs_webui_home_dir }}/node_modules/ipfs-api/dist/index.js"

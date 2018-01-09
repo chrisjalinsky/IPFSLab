@@ -1,0 +1,34 @@
+---
+
+- name: Ensure service dir exists
+  file:
+    dest: "{{ ethereum_init_dir }}"
+    state: directory
+
+- name: Template init files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "0755"
+  with_items: "{{ ethereum_init_templates }}"
+
+- name: Test for bootnode listener on port {{ ethereum_port }}
+  register: bootnode_registration
+  shell: "lsof -i:{{ ethereum_port }}"
+  ignore_errors: yes
+
+- name: Debug bootnode bootnode_registration
+  when: >
+    bootnode_registration.stdout is defined
+  debug:
+    var: bootnode_registration.stdout
+
+- name: Start bootnode if port not open
+  when: >
+    'bootnode' not in bootnode_registration.stdout and
+    bootnode_registration.stdout is defined
+  systemd:
+    name: "gethexec"
+    state: started
+    daemon_reload: yes
+  #shell: "/usr/bin/bootnode --nodekey={{ ethereum_db_conf_dir }}/boot.key"

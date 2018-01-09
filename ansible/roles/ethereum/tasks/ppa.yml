@@ -1,0 +1,20 @@
+---
+
+- name: Ensure apt dependencies
+  apt:
+    name: "{{ item.apt }}"
+    update_cache: yes
+    cache_valid_time: 3600
+  with_items: "{{ ethereum_deps }}"
+
+- name: Ensure apt repository present
+  apt_repository:
+    repo: "{{ ethereum_ppa }}"
+    update_cache: yes
+
+- name: Ensure packages installed
+  apt:
+    name: "{{ item.name }}"
+    update_cache: yes
+    cache_valid_time: 3600
+  with_items: "{{ ethereum_pkg }}"

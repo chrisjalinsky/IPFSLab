@@ -1,0 +1,8 @@
+---
+
+- name: Template scripts
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "0775"
+  with_items: "{{ ethereum_scripts_list }}"

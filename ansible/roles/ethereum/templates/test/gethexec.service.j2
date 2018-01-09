@@ -1,0 +1,11 @@
+[Unit]
+Description=Geth exec service
+Documentation=https://ethereum.stackexchange.com/questions/23664/how-to-generate-the-correct-go-ethereum-bootnode-when-creating-a-private-blockch
+
+[Service]
+ExecStart=/usr/bin/geth --datadir {{ ethereum_db_data_dir }} init {{ ethereum_db_conf_dir }}/genesis.json
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

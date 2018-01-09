@@ -1,0 +1,5 @@
+---
+
+# defaults
+nodejs_tmp_dir: "/tmp"
+nodejs_version: "6"

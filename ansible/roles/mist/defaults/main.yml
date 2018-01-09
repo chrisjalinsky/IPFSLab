@@ -1,0 +1,7 @@
+---
+
+mist_version: "0.9.3"
+mist_alt_version: "{{ mist_version | regex_replace('.','-') }}"
+mist_arch: "linux64"
+mist_name: "Ethereum-Wallet-{{ mist_arch }}-{{ mist_alt_version }}"
+mist_deb_url: "https://github.com/ethereum/mist/releases/download/v{{ mist_version }}/{{ mist_name }}.deb"

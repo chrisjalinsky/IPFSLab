@@ -1,0 +1,33 @@
+---
+
+- name: Ensure Nodejs tmp dir {{ nodejs_tmp_dir }} exists
+  file:
+    dest: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ nodejs_tmp_dir }}"
+
+- name: Check for node version
+  shell: "node --version"
+  register: node_installed
+  ignore_errors: yes
+
+- name: Download Node {{ nodejs_version }} Installer to {{ nodejs_tmp_dir }}/install_node{{ nodejs_version }}.sh when specified
+  when: node_installed|failed
+  get_url:
+    url: "http://deb.nodesource.com/setup_{{ nodejs_version }}.x"
+    dest: "{{ nodejs_tmp_dir }}/install_node{{ nodejs_version }}.sh"
+    mode: "0775"
+
+- name: Run {{ nodejs_tmp_dir }}/install_node{{ nodejs_version }}.sh when specified
+  when: node_installed|failed
+  shell: "{{ nodejs_tmp_dir }}/install_node{{ nodejs_version }}.sh"
+  args:
+    executable: /bin/bash
+
+- name: Ensure nodejs package installed when specified
+  apt:
+    name: "nodejs"
+    update_cache: yes
+    cache_valid_time: 3600
+    

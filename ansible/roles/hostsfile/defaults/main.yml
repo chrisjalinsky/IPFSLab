@@ -1,0 +1,4 @@
+---
+
+hostsfile_iface: "ansible_eth1"
+hostsfile_group: ""

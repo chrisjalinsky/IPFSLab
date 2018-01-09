@@ -1,0 +1,77 @@
+---
+
+ethereum_install_method: "ppa"
+
+ethereum_deps:
+  - apt: "software-properties-common"
+
+ethereum_ppa: "ppa:ethereum/ethereum"
+
+ethereum_pkg:
+  - name: "ethereum"
+
+# git build
+ethereum_git_parent_dir: "/opt/src"
+ethereum_git_dir: "{{ ethereum_git_parent_dir }}/ethereum"
+ethereum_git_apt_deps:
+  - "git"
+  - "libboost-all-dev"
+  - "libleveldb-dev"
+  - "libcurl4-openssl-dev"
+  - "libmicrohttpd-dev"
+  - "libminiupnpc-dev"
+  - "libgmp-dev"
+
+ethereum_build_dir: "{{ ethereum_git_dir }}/build"
+ethereum_cmake_exec: "/usr/local/bin/cmake"
+
+# db and template selection vars
+ethereum_db_key: "test"
+ethereum_db_conf_dir: "/etc/{{ ethereum_db_key }}"
+ethereum_db_data_dir: "/var/tmp/{{ ethereum_db_key }}"
+
+ethereum_init_dir: "/etc/systemd/system"
+
+
+ethereum_network_id: 15
+ethereum_cors_domain: "*"
+ethereum_addr: "{{ hostvars[inventory_hostname]['ansible_enp0s8']['ipv4']['address'] }}"
+ethereum_port: "30301"
+ethereum_rpc_port: "8000"
+ethereum_discoverable: True
+ethereum_nat: "any"
+
+ethereum_ipc_api_list:
+  - "admin"
+  - "db"
+  - "eth"
+  - "debug"
+  - "miner"
+  - "net"
+  - "shh"
+  - "txpool"
+  - "personal"
+  - "web3"
+
+ethereum_rpc_api_list:
+  - "db"
+  - "eth"
+  - "net"
+  - "web3"
+
+ethereum_db_templates:
+  - src: "{{ ethereum_db_key }}/genesis.json.j2"
+    dest: "{{ ethereum_db_conf_dir }}/genesis.json"
+
+ethereum_init_templates:
+  - src: "{{ ethereum_db_key }}/ethboot.service.j2"
+    dest: "{{ ethereum_init_dir }}/ethboot.service"
+  - src: "{{ ethereum_db_key }}/gethexec.service.j2"
+    dest: "{{ ethereum_init_dir }}/gethexec.service"
+
+ethereum_scripts_dir: "/usr/bin"
+ethereum_scripts_list:
+  - src: "{{ ethereum_db_key }}/gethconsole.sh.j2"
+    dest: "{{ ethereum_scripts_dir }}/gethconsole.sh"
+  - src: "{{ ethereum_db_key }}/initgenesis.sh.j2"
+    dest: "{{ ethereum_scripts_dir }}/initgenesis.sh"
