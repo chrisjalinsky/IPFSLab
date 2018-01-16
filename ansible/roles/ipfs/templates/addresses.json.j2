@@ -1,7 +1,5 @@
 "Addresses": {
-  "Swarm": [
-    "/ip4/{{ ipfs_swarm_listen_iface }}/tcp/4001"
-  ],
-  "API": "/ip4/{{ ipfs_api_listen_iface }}/tcp/5001",
-  "Gateway": "/ip4/{{ ipfs_gw_listen_iface }}/tcp/8080"
+  "Swarm": {{ ipfs_swarm_list|to_json }}
+  ,"API": "/ip4/{{ ipfs_api_listen_iface }}/tcp/5001"
+  ,"Gateway": "/ip4/{{ ipfs_gw_listen_iface }}/tcp/8080"
 }

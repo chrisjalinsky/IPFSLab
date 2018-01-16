@@ -15,12 +15,95 @@
           groups:
             - "fuse"
           append: "yes"
-    # dependency install web ui for ipfs
+    # dependency install web ui and peerpad
     - role: nodejs
-    - role: ipfs_webui
-      ipfs_webui_user: "fuse"
+      nodejs_version: "7"
     - role: go
       go_user: "fuse"
+      go_version: "1.9.2"
+      go_user_home: "/home/fuse"
+    # create self signed cert
+    - role: openssl
+      openssl_generator_complexity: 2048
+    # this is an admin role, creating nginx proxy and file server for swarm.key
+    - role: ipfs_swarm_keygen
+      ipfs_swarm_keygen_user: "fuse"
+      ipfs_swarm_keygen_go_path: "/home/fuse/app"
+      ipfs_swarm_keygen_go_bin_dir: /usr/local/go/bin
+      # http fileserver
+      ipfs_swarm_keygen_nginx_root_dir: "/var/tmp/nginx_swarm"
+      ipfs_swarm_keygen_nginx_port: "8083"
+      # peerpad nginx ssl key and cert, as openssl role creates
+      ipfs_swarm_keygen_openssl_cert_dest: "/etc/ssl/{{ inventory_hostname }}/{{ inventory_hostname }}.crt"
+      ipfs_swarm_keygen_openssl_key_dest: "/etc/ssl/{{ inventory_hostname }}/{{ inventory_hostname }}.key"
+      ipfs_swarm_keygen_openssl_dh_param_dest: "/etc/ssl/certs/dhparam.pem"
+      ipfs_swarm_keygen_go_pkgs:
+        - "github.com/Kubuxu/go-ipfs-swarm-key-gen/ipfs-swarm-key-gen"
+    # Pull key from selected node
+    - role: ipfs_swarm_keypull
+      ipfs_swarm_keypull_user: "fuse"
+      ipfs_swarm_keypull_ipfs_path: "/home/fuse/.ipfs"
+      ipfs_swarm_keypull_src: "http://{{ groups['ethereum_nodes'][0] }}:8083/swarm.key"
+    # Install and configure ipfs, but wait til bootstrapped to start
+    - role: ipfs
+      ipfs_api_listen_iface: "{{ hostvars[inventory_hostname]['ansible_enp0s8']['ipv4']['address']|default('0.0.0.0') }}"
+      ipfs_gw_listen_iface: "{{ hostvars[inventory_hostname]['ansible_enp0s8']['ipv4']['address']|default('0.0.0.0') }}"
+      ipfs_swarm_list: "{{ hostvars|ipfs_format(groups['ethereum_nodes'],'ansible_enp0s8','4001') }}"
+    # Has to be run after ipfs installed, so we can read custom facts from the created config file
+    - role: ipfs_facts
+      ipfs_facts_user: "fuse"
+    # nodejs apps
+    - role: ipfs_peerpad
+      ipfs_peerpad_user: "fuse"
+    - role: ipfs_webui
+      ipfs_webui_user: "fuse"
     #- role: ethereum
     #- role: ethereum_contracts
-    - role: ipfs
+
+- name: Bootstrap all nodes with new ipfs facts
+  hosts: ethereum_nodes
+  become: yes
+  become_user: root
+  gather_facts: True
+  tasks:
+
+    - name: Remove all bootstrap peers (move to ipfs config)
+      become_user: "fuse"
+      become: yes
+      shell: "ipfs bootstrap rm --all"
+
+    - name: IPFS bootstrap with custom facts
+      when: >
+        hostvars is defined and
+        hostvars[item] is defined and
+        hostvars[item]['ansible_local'] is defined and
+        hostvars[item]['ansible_local']['ipfs'] is defined and
+        hostvars[item]['ansible_local']['ipfs']['ipfs_config'] is defined and
+        hostvars[item]['ansible_local']['ipfs']['ipfs_config']['Identity'] is defined and
+        hostvars[item]['ansible_local']['ipfs']['ipfs_config']['Identity']['PeerID'] is defined and
+        hostvars[item]['ansible_enp0s8'] is defined and
+        hostvars[item]['ansible_enp0s8']['ipv4'] is defined and
+        hostvars[item]['ansible_enp0s8']['ipv4']['address'] is defined
+      become_user: "fuse"
+      become: yes
+      shell: "ipfs bootstrap add /ip4/{{ hostvars[item]['ansible_enp0s8']['ipv4']['address'] }}/tcp/4001/ipfs/{{ hostvars[item]['ansible_local']['ipfs']['ipfs_config']['Identity']['PeerID'] }}"
+      with_items: "{{ groups['ethereum_nodes'] }}"
+
+    - name: Ensure ipfs daemon started
+      systemd:
+        name: "ipfs-svc"
+        daemon_reload: yes
+        state: started
+
+    #- name: Wait for default ipfs ports to come up
+    #  wait_for:
+    #    host: "{{ item.host }}"
+    #    port: "{{ item.port }}"
+    #    #delay: 10
+    #  with_items:
+    #    - port: "4001"
+    #      host: "0.0.0.0"
+    #    - port: "5001"
+    #      host: "127.0.0.1"
+    #    - port: "8080"
+    #      host: "127.0.0.1"

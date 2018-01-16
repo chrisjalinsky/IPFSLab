@@ -1,0 +1,68 @@
+#!/usr/bin/env python
+
+import datetime
+import json
+import requests
+
+def main():
+	global module
+	module = AnsibleModule(
+	    argument_spec = dict(
+		username = dict(default='mapr'),
+		password = dict(default='mapr'),
+		mapr_webserver = dict(required=True),
+		cluster = dict(required=False),
+		verify_ssl = dict(required=False, default=False, type='bool')
+	    )
+	)
+	data = mapr_facts(module)
+	module.exit_json(**data)
+
+def mapr_facts(module):
+	data = { "changed": True, "ansible_facts": { } }
+	nodes = node_list(module.params["cluster"])
+	#cldb_list = cldb_list(module.params["cluster"])
+	data["ansible_facts"]["nodes"] = nodes
+	return data
+
+def node_list(cluster):
+	params = { }
+	if cluster:
+		params["cluster"] = cluster
+
+	data = mapr_api_request(module.params["mapr_webserver"], "node", "list", module.params["username"], module.params["password"], params=params)
+	if "errors" in data.keys():
+		module.fail_json(msg="node_list: %s" % data)
+	return data
+
+def mapr_api_request(webserver_url, object, action, username, password, params={}):
+	data = { }
+	url = "/".join([webserver_url, "rest", object, action])
+	try:
+		r = requests.get(url, auth=(username,password), verify=module.params["verify_ssl"], params=params)
+	except requests.exceptions.ConnectionError as error:
+		module.fail_json(msg="Connection error: %s" % error, rc=1)
+
+	try:
+		r.raise_for_status()
+	except requests.exceptions.HTTPError as error:
+		module.fail_json(msg="HTTP error contacting '%s' - %s" % (url, error), rc=1)
+
+	try:
+		response = r.json()
+	except ValueError:
+		module.fail_json(msg="Response had no parsable JSON: code: %s, response: %s" % (r.status_code, r.text))
+
+	try:
+		if 'data' in response.keys():
+			data["volumes"] = response["data"]
+		else:
+			data["volumes"] = []
+			data.update(response)
+	except KeyError:
+		module.fail_json(msg="No data key: %s" % response)
+
+	return data
+
+from ansible.module_utils.basic import *
+main()

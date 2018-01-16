@@ -1,0 +1,7 @@
+---
+
+- name: ipfs_swarm_keygen_restart_nginx
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: nginx

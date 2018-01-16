@@ -1,0 +1,7 @@
+---
+
+ipfs_swarm_keypull_user: "fuse"
+ipfs_swarm_keypull_user_home: "/home/fuse"
+ipfs_swarm_keypull_ipfs_path: "/home/fuse/.ipfs"
+ipfs_swarm_keypull_src: "http://{{ inventory_hostname }}:8083/swarm.key"
+ipfs_swarm_keypull_dest: "{{ ipfs_swarm_keypull_ipfs_path }}/swarm.key"

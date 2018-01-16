@@ -1,0 +1,20 @@
+---
+
+- name: "Create custom fact directory"
+  file:
+    path: "/etc/ansible/facts.d"
+    state: "directory"
+
+- name: "Insert custom ipfs fact file"
+  template:
+    src: ipfs.fact
+    dest: /etc/ansible/facts.d/ipfs.fact
+    mode: 0755
+
+- name: "Re-run setup to use custom facts"
+  register: ipfs_facts_registration
+  setup: ~
+
+#- name: debug
+#  debug:
+#    var: ipfs_facts_registration

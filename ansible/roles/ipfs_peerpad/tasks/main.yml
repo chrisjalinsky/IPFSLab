@@ -1,0 +1,38 @@
+---
+
+- name: Ensure git present
+  apt:
+    name: git
+    update_cache: yes
+    cache_valid_time: 3600
+  with_items:
+    - "git"
+    - "build-essential"
+    - "g++"
+
+- name: Ensure git repo downloaded
+  git:
+    repo: "{{ ipfs_peerpad_git_repo }}"
+    version: "{{ ipfs_peerpad_git_branch }}"
+    update: no
+    dest: "{{ ipfs_peerpad_home_dir }}"
+
+- name: Ensure directory chowned and chmodded to {{ ipfs_peerpad_user }}
+  file:
+    dest: "{{ ipfs_peerpad_home_dir }}"
+    owner: "{{ ipfs_peerpad_user }}"
+    mode: "0775"
+    recurse: yes
+    state: directory
+
+#Possible build fixes
+#sudo npm install -g npm-install-peers
+#or update npm
+#sudo npm install -g npm
+#sudo npm install
+
+#- name: Npm install
+#  shell: "sudo npm install"
+#  args:
+#    chdir: "{{ ipfs_peerpad_home_dir }}"
+#    #creates: "{{ ipfs_peerpad_home_dir }}/node_modules/ipfs-api/dist/index.js"

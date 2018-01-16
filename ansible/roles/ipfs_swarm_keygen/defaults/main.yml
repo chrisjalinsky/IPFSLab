@@ -1,0 +1,19 @@
+---
+
+ipfs_swarm_keygen_user: "fuse"
+ipfs_swarm_keygen_go_path: "/home/fuse/go"
+ipfs_swarm_keygen_go_bin_dir: /usr/local/go/bin
+ipfs_swarm_keygen_go_pkgs:
+  - "github.com/Kubuxu/go-ipfs-swarm-key-gen/ipfs-swarm-key-gen"
+
+ipfs_swarm_keygen_nginx_root_dir: "/var/tmp"
+ipfs_swarm_keygen_nginx_port: "8083"
+
+ipfs_swarm_keygen_cmd_list:
+  - cmd: "{{ ipfs_swarm_keygen_go_path }}/bin/ipfs-swarm-key-gen > {{ ipfs_swarm_keygen_nginx_root_dir }}/swarm.key"
+    creates: "{{ ipfs_swarm_keygen_nginx_root_dir }}/swarm.key"
+
+# location of nginx ssl key and cert
+ipfs_swarm_keygen_openssl_cert_dest: "/etc/ssl/{{ inventory_hostname }}/{{ inventory_hostname }}.crt"
+ipfs_swarm_keygen_openssl_key_dest: "/etc/ssl/{{ inventory_hostname }}/{{ inventory_hostname }}.key"
+ipfs_swarm_keygen_openssl_dh_param_dest: "/etc/ssl/certs/dhparam.pem"

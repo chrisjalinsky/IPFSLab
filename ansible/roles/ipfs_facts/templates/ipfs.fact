@@ -1,0 +1,9 @@
+#!/bin/bash
+
+CONF=$(sudo cat /home/{{ ipfs_facts_user }}/.ipfs/config)
+
+cat <<EOF
+{
+    "ipfs_config" : $CONF
+}
+EOF

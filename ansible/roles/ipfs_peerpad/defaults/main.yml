@@ -1,0 +1,8 @@
+---
+
+ipfs_peerpad_name: "peerpad"
+ipfs_peerpad_git_repo: "https://github.com/ipfs-shipyard/{{ ipfs_peerpad_name }}.git"
+ipfs_peerpad_git_branch: "master"
+ipfs_peerpad_parent_dir: "/opt"
+ipfs_peerpad_home_dir: "{{ ipfs_peerpad_parent_dir }}/ipfs_{{ ipfs_peerpad_name }}_{{ ipfs_peerpad_git_branch }}"
+ipfs_peerpad_user: "fuse"

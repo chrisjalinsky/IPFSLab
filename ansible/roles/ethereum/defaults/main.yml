@@ -1,5 +1,5 @@
 ---
-
+# ppa,git
 ethereum_install_method: "ppa"
 
 ethereum_deps:
@@ -33,7 +33,7 @@ ethereum_db_data_dir: "/var/tmp/{{ ethereum_db_key }}"
 ethereum_init_dir: "/etc/systemd/system"
 
 
-ethereum_network_id: 15
+ethereum_network_id: 1535612
 ethereum_cors_domain: "*"
 ethereum_addr: "{{ hostvars[inventory_hostname]['ansible_enp0s8']['ipv4']['address'] }}"
 ethereum_port: "30301"

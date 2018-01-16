@@ -1,0 +1,52 @@
+---
+
+- name: Go get packages
+  become: yes
+  become_user: "{{ ipfs_swarm_keygen_user }}"
+  shell: "{{ ipfs_swarm_keygen_go_bin_dir }}/go get {{ item }}"
+  args:
+    executable: "/bin/bash"
+    creates: "{{ ipfs_swarm_keygen_go_path }}/src/{{ item }}"
+  with_items: "{{ ipfs_swarm_keygen_go_pkgs }}"
+  environment:
+    GOPATH: "{{ ipfs_swarm_keygen_go_path }}"
+
+- name: Install nginx to expose swarm key
+  apt:
+    name: nginx
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Ensure nginx swarm root dir present
+  file:
+    dest: "{{ ipfs_swarm_keygen_nginx_root_dir }}"
+    state: directory
+    owner: "www-data"
+    group: "www-data"
+    mode: "0777"
+    recurse: yes
+
+- name: Exec Go cmds
+  become: yes
+  become_user: "{{ ipfs_swarm_keygen_user }}"
+  shell: "{{ item.cmd }}"
+  args:
+    executable: "/bin/bash"
+    creates: "{{ item.creates }}"
+    chdir: "{{ ipfs_swarm_keygen_go_bin_dir }}"
+  with_items: "{{ ipfs_swarm_keygen_cmd_list }}"
+  environment:
+    GOPATH: "{{ ipfs_swarm_keygen_go_path }}"
+
+- name: Template nginx conf
+  template:
+    src: "nginx.conf"
+    dest: "/etc/nginx/nginx.conf"
+  notify:
+    - "ipfs_swarm_keygen_restart_nginx"
+
+- name: Ensure nginx restarted
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: nginx

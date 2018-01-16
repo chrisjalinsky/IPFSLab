@@ -1,0 +1,14 @@
+---
+- name: Ensure ipfs dir exists
+  file:
+    dest: "{{ ipfs_swarm_keypull_ipfs_path }}"
+    owner: "{{ ipfs_swarm_keypull_user }}"
+    state: directory
+    mode: "0755"
+
+- name: Download swarm key file
+  get_url:
+    url: "{{ ipfs_swarm_keypull_src }}"
+    dest: "{{ ipfs_swarm_keypull_dest }}"
+    owner: "{{ ipfs_swarm_keypull_user }}"
+    mode: "0644"

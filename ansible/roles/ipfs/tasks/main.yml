@@ -91,17 +91,19 @@
 ##      {{ ipfs_init_registration.stdout }}
 
 # Config for fuse mount
-#- name: Ensure ipfs config cmds run
-#  become_user: "{{ ipfs_user }}"
-#  become: yes
-#  shell: "{{ item.shell }}"
-#  with_items:
-#    - shell: "ipfs config --json Mounts.FuseAllowOther true"
-
-#ipfs config --json Addresses.API '"/ip4/0.0.0.0/tcp/5001"'
-#ipfs config --json Addresses.Gateway '"/ip4/0.0.0.0/tcp/8080"'
-#ipfs config --json Addresses.Swarm '["/ip4/0.0.0.0/tcp/4001"]'
-#ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '["*"]'
+- name: Ensure ipfs config cmds run
+  become_user: "{{ ipfs_user }}"
+  become: yes
+  shell: "{{ item.shell }}"
+  with_items:
+    - shell: "ipfs config --json Mounts.FuseAllowOther true"
+    - shell: "ipfs config --json Addresses.Swarm '{{ ipfs_swarm_list|to_json }}'"
+    - shell: "ipfs config --json Addresses.API '\"{{ ipfs_addresses_json.Addresses.API }}\"'"
+    - shell: "ipfs config --json Addresses.Gateway '\"{{ ipfs_addresses_json.Addresses.Gateway }}\"'"
+    - shell: "ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '[\"*\"]'"
+    - shell: "ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '[\"PUT\", \"GET\", \"POST\"]'"
+    - shell: "ipfs config --json API.HTTPHeaders.Access-Control-Allow-Credentials '[\"true\"]'"
+    - shell: "ipfs config --json Experimental.FilestoreEnabled true"
 
 - name: Ensure template service present
   template:
