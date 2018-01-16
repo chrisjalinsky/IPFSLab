@@ -6,3 +6,8 @@ ipfs_peerpad_git_branch: "master"
 ipfs_peerpad_parent_dir: "/opt"
 ipfs_peerpad_home_dir: "{{ ipfs_peerpad_parent_dir }}/ipfs_{{ ipfs_peerpad_name }}_{{ ipfs_peerpad_git_branch }}"
 ipfs_peerpad_user: "fuse"
+
+ipfs_peerpad_gateway: "https://ipfs.io/ipfs"
+# default swarm list
+ipfs_peerpad_swarm_list:
+  - "/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star"

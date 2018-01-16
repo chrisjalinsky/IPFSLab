@@ -1,8 +1,8 @@
 ---
 
-- name: Ensure git present
+- name: Ensure apt deps present
   apt:
-    name: git
+    name: "{{ item }}"
     update_cache: yes
     cache_valid_time: 3600
   with_items:
@@ -25,14 +25,36 @@
     recurse: yes
     state: directory
 
+- name: Template peerpad source code to connect to private swarm
+  template:
+    src: "Edit.js"
+    dest: "{{ ipfs_peerpad_home_dir }}/src/components/Edit.js"
+
+- name: Ensure line in files set in source code for private net usage
+  lineinfile:
+    line: "{{ item.line }}"
+    regexp: "{{ item.regexp }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - line: "export const GATEWAY_PREFIX = '{{ ipfs_peerpad_gateway }}'"
+      regexp: "^export\\s+const\\s+GATEWAY_PREFIX\\s+=.*"
+      dest: "{{ ipfs_peerpad_home_dir }}/src/components/SnapshotLink.js"
+
+- name: Npm install packages (takes time)
+  become: yes
+  become_user: "{{ ipfs_peerpad_user }}"
+  shell: "npm install"
+  args:
+    chdir: "{{ ipfs_peerpad_home_dir }}"
+    creates: "{{ ipfs_peerpad_home_dir }}/node_modules/ipfs/dist/index.js"
+
 #Possible build fixes
 #sudo npm install -g npm-install-peers
-#or update npm
-#sudo npm install -g npm
-#sudo npm install
 
-#- name: Npm install
-#  shell: "sudo npm install"
-#  args:
-#    chdir: "{{ ipfs_peerpad_home_dir }}"
-#    #creates: "{{ ipfs_peerpad_home_dir }}/node_modules/ipfs-api/dist/index.js"
+- name: Npm run build to create distribution (takes time)
+  become: yes
+  become_user: "{{ ipfs_peerpad_user }}"
+  shell: "npm run build"
+  args:
+    chdir: "{{ ipfs_peerpad_home_dir }}"
+    creates: "{{ ipfs_peerpad_home_dir }}/build/static/js/main.bundle.js"

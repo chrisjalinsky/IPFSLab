@@ -33,6 +33,8 @@
       # http fileserver
       ipfs_swarm_keygen_nginx_root_dir: "/var/tmp/nginx_swarm"
       ipfs_swarm_keygen_nginx_port: "8083"
+      # peerpad
+      ipfs_swarm_keygen_peerpad_build_dir: "/opt/ipfs_peerpad_master/build"
       # peerpad nginx ssl key and cert, as openssl role creates
       ipfs_swarm_keygen_openssl_cert_dest: "/etc/ssl/{{ inventory_hostname }}/{{ inventory_hostname }}.crt"
       ipfs_swarm_keygen_openssl_key_dest: "/etc/ssl/{{ inventory_hostname }}/{{ inventory_hostname }}.key"
@@ -55,6 +57,8 @@
     # nodejs apps
     - role: ipfs_peerpad
       ipfs_peerpad_user: "fuse"
+      ipfs_peerpad_gateway: "http://{{ inventory_hostname }}:8080/ipfs"
+      ipfs_peerpad_swarm_list: "{{ hostvars|ipfs_format(groups['ethereum_nodes'],'ansible_enp0s8','4001') }}"
     - role: ipfs_webui
       ipfs_webui_user: "fuse"
     #- role: ethereum
