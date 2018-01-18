@@ -12,8 +12,8 @@ ipfs_user: "fuse"
 ipfs_user_group: "fuse"
 ipfs_user_home: "/home/fuse"
 
-ipfs_api_listen_iface: "0.0.0.0"
-ipfs_gw_listen_iface: "0.0.0.0"
+ipfs_api_listen_iface: "127.0.0.1"
+ipfs_gw_listen_iface: "127.0.0.1"
 ipfs_swarm_list: []
 
 # Dependent on vars above

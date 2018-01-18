@@ -19,6 +19,9 @@ ipfs_swarm_keygen_openssl_key_dest: "/etc/ssl/{{ inventory_hostname }}/{{ invent
 ipfs_swarm_keygen_openssl_dh_param_dest: "/etc/ssl/certs/dhparam.pem"
 
 # where peerpad is installed
-
 ipfs_swarm_keygen_peerpad_build_dir: "/opt/ipfs_peerpad_master/build"
 ipfs_swarm_keygen_peerpad_hostname: "{{ inventory_hostname }}"
+
+# where Webui is installed
+ipfs_swarm_keygen_webui_dist_dir: "/opt/ipfs_webui_vmaster/dist"
+ipfs_swarm_keygen_webui_hostname: "{{ inventory_hostname }}"

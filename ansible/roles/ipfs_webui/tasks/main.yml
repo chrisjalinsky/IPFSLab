@@ -21,8 +21,32 @@
     recurse: yes
     state: directory
 
+- name: Ensure src code ovverrides in place when ipfs_webui_line_overrides_list var is defined
+  when: >
+    ipfs_webui_line_overrides_list is defined and
+    ipfs_webui_line_overrides_list|length > 0 and
+    item is defined and
+    item.line is defined and
+    item.dest is defined and
+    item.regexp is defined
+  lineinfile:
+    line: "{{ item.line }}"
+    regexp: "{{ item.regexp }}"
+    dest: "{{ item.dest }}"
+  with_items: "{{ ipfs_webui_line_overrides_list }}"
+
 - name: Npm install
+  become: yes
+  become_user: "{{ ipfs_webui_user }}"
   shell: "npm install"
   args:
     chdir: "{{ ipfs_webui_home_dir }}"
     creates: "{{ ipfs_webui_home_dir }}/node_modules/ipfs-api/dist/index.js"
+
+- name: Npm run build
+  become: yes
+  become_user: "{{ ipfs_webui_user }}"
+  shell: "npm run build"
+  args:
+    chdir: "{{ ipfs_webui_home_dir }}"
+    creates: "{{ ipfs_webui_home_dir }}/dist/index.html"

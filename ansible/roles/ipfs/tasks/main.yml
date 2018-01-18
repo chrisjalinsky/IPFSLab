@@ -104,6 +104,7 @@
     - shell: "ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '[\"PUT\", \"GET\", \"POST\"]'"
     - shell: "ipfs config --json API.HTTPHeaders.Access-Control-Allow-Credentials '[\"true\"]'"
     - shell: "ipfs config --json Experimental.FilestoreEnabled true"
+    - shell: "ipfs config --json Experimental.Libp2pStreamMounting true"
 
 - name: Ensure template service present
   template:

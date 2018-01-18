@@ -1,14 +1,22 @@
-# IPFS Ansible Vagrant
+# Overview of IPFSLab
+The deploy script will configure a 3 node Ubuntu 16 IPFS private network. The goal is to keep all IPFS functionality contained within a private subnet.
 
-## GETTING STARTED
+**Hosts:**
+* ethereum1.lan
+* ethereum2.lan
+* ethereum3.lan
 
-* When in doubt, ```vagrant destroy```. These VMs are meant to be ephemeral. If a provision doesn't succeed, just destroy and recreate. The purpose of this repo is to provide consistent environments and a repeatable automated procedure to build the infrastructure.
-
-* Vagrant is utilized as a Virtualbox VM builder. The following dependencies are required to build the VMs locally.
+Additional blockchain tools and projects will be installed alongside the IPFS project including:
+* [IPFS Peerpad](https://github.com/ipfs-shipyard/peerpad) - Awesome shared realtime NodeJS app utilizing ipfs.
+* [IPFS WebUI](https://github.com/ipfs-shipyard/ipfs-webui) - Awesome frontend NodeJS app for ipfs.
+* [Ethereum](https://ethereum.org/)
 
 ### REQUIRED SOFTWARE
 
-**The following applications are required**
+The development of this project was created on a Mac OSX (v10.12.6 Sierra) 16 GB laptop:
+
+
+**The following applications are required for development**
 
 * [Virtualbox](https://www.virtualbox.org/wiki/Downloads)
 * [Vagrant](https://www.vagrantup.com/downloads.html)
@@ -18,7 +26,7 @@
 
 * [Vagrant Hostsupdater plugin](https://github.com/cogitatio/vagrant-hostsupdater) Install with: ```vagrant plugin install vagrant-hostsupdater``` This convenient but optional plugin is used to manage the ```/etc/hosts``` file on the hypervisor for accessing UIs and DNS.
 
-### Install Lab:
+### Install IPFSLab:
 
 Simply clone the repo and run all commands from the root directory
 ```
@@ -28,11 +36,12 @@ cd IPFSLab
 ```
 
 ### Vagrant
-Uses the box ```bento/ubuntu-16.04``` by default. This could be any favor of Ubuntu 16.04
+Uses the box ```bento/ubuntu-16.04``` by default. This could be any flavor of Ubuntu 16.04
 
 ### Ansible
-The deploy script runs the following playbook with inventory:
+The deploy script runs the following playbook with a psuedo-dynamic inventory:
 ```
+cd ansible
 ansible-playbook provision_ipfs.yaml -i inventory.py
 ```
 
@@ -48,10 +57,19 @@ ansible all -m setup -a 'filter=ansible_local' -i inventory.py
 ```
 
 #### ipfs_webui role
-[WebUI](https://github.com/ipfs-shipyard/ipfs-webui) - Awesome frontend NodeJS app for ipfs.
+[IPFS WebUI](https://github.com/ipfs-shipyard/ipfs-webui) - Awesome frontend NodeJS app for ipfs.
 
 #### ipfs_peerpad role
-[Peerpad](https://github.com/ipfs-shipyard/peerpad) - Awesome shared realtime NodeJS app utilizing ipfs.
+[IPFS Peerpad](https://github.com/ipfs-shipyard/peerpad) - Awesome shared realtime NodeJS app utilizing ipfs.
+
+The default install creates a NodeJS app which connects to the public IPFS swarm. This role rewrites the source code to connect to the private swarm.
+
+The web address to connect to the WebUIs:
+```
+https://ethereum1.lan/#/
+https://ethereum2.lan/#/
+https://ethereum3.lan/#/
+```
 
 ## Additional Details
 
@@ -59,3 +77,5 @@ ansible all -m setup -a 'filter=ansible_local' -i inventory.py
 * For additional commands, see ```roles/ipfs/tasks/main.yml```
 * [Experimental Features - Private Networks](https://github.com/ipfs/go-ipfs/blob/master/docs/experimental-features.md#private-networks)
 * [Web UI from remote nodes](https://discuss.ipfs.io/t/running-ipfs-in-a-vm-with-webui/495/3)
+
+**Much appreciation for the hard work and effort by these IPFS and Ethereum project's developers**

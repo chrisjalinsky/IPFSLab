@@ -55,12 +55,28 @@
     - role: ipfs_facts
       ipfs_facts_user: "fuse"
     # nodejs apps
-    - role: ipfs_peerpad
-      ipfs_peerpad_user: "fuse"
-      ipfs_peerpad_gateway: "http://{{ inventory_hostname }}:8080/ipfs"
-      ipfs_peerpad_swarm_list: "{{ hostvars|ipfs_format(groups['ethereum_nodes'],'ansible_enp0s8','4001') }}"
+    #- role: ipfs_peerpad
+    #  ipfs_peerpad_user: "fuse"
+    #  ipfs_peerpad_gateway: "http://{{ inventory_hostname }}:8080/ipfs"
+    #  ipfs_peerpad_swarm_list: "{{ hostvars|ipfs_format(groups['ethereum_nodes'],'ansible_enp0s8','4001') }}"
     - role: ipfs_webui
       ipfs_webui_user: "fuse"
+      ipfs_webui_line_overrides_list:
+        - line: "const host = '{{ hostvars[inventory_hostname]['ansible_enp0s8']['ipv4']['address']|default('0.0.0.0') }}'"
+          regexp: "^const\\s+host\\s+=.*"
+          dest: "/opt/ipfs_webui_vmaster/src/app/js/components/ipfs.js"
+        - line: "const port = '5001'"
+          regexp: "^const\\s+port\\s+=.*"
+          dest: "/opt/ipfs_webui_vmaster/src/app/js/components/ipfs.js"
+        - line: "let gateway = '//{{ hostvars[inventory_hostname]['ansible_enp0s8']['ipv4']['address']|default('0.0.0.0') }}:8080'"
+          regexp: "^let\\s+gateway\\s+=.*"
+          dest: "/opt/ipfs_webui_vmaster/src/app/js/components/ipfs.js"
+        - line: "const host = '{{ hostvars[inventory_hostname]['ansible_enp0s8']['ipv4']['address']|default('0.0.0.0') }}'"
+          regexp: "^const\\s+host\\s+=.*"
+          dest: "/opt/ipfs_webui_vmaster/src/app/js/services/api.js"
+        - line: "const port = '5001'"
+          regexp: "^const\\s+port\\s+=.*"
+          dest: "/opt/ipfs_webui_vmaster/src/app/js/services/api.js"
     #- role: ethereum
     #- role: ethereum_contracts
 
