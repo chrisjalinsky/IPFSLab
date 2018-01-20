@@ -105,6 +105,7 @@
     - shell: "ipfs config --json API.HTTPHeaders.Access-Control-Allow-Credentials '[\"true\"]'"
     - shell: "ipfs config --json Experimental.FilestoreEnabled true"
     - shell: "ipfs config --json Experimental.Libp2pStreamMounting true"
+    - shell: "ipfs config --json Experimental.ShardingEnabled true"
 
 - name: Ensure template service present
   template:

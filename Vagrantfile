@@ -3,7 +3,7 @@ require 'yaml'
 VAGRANTFILE_API_VERSION = "2"
 
 base_dir = File.expand_path(File.dirname(__FILE__))
-inventory_file = base_dir + "/ansible/ethereum_inventory.yaml"
+inventory_file = base_dir + "/ansible/ipfs_inventory.yaml"
 
 servers = YAML.load_file(inventory_file)
 meta = servers["_meta"]

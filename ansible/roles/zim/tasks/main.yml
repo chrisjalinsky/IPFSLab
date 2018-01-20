@@ -1,0 +1,44 @@
+---
+
+- name: Ensure git present
+  apt:
+    name: "git"
+    update_cache: yes
+    cache_valid_time: 3600
+  with_items:
+    - "git"
+    - "build-essential"
+    - "gcc"
+    - "make"
+
+- name: Ensure zim reader git repo downloaded
+  git:
+    repo: "{{ zim_git_repo }}"
+    dest: "{{ zim_home }}"
+    version: "{{ zim_git_version }}"
+    update: no
+
+- name: Ensure zim reader git repo chmodded and chowned
+  file:
+    dest: "{{ zim_home }}"
+    state: directory
+    owner: "{{ zim_user }}"
+    mode: "0755"
+    recurse: yes
+
+- name: Build zim as {{ zim_user }} user
+  become: yes
+  become_user: "{{ zim_user }}"
+  shell: ". $HOME/.cargo/env && cargo build --release"
+  args:
+    chdir: "{{ zim_home }}"
+    creates: "{{ zim_home }}/target/release/extract_zim"
+
+- name: Ensure {{ zim_symlink_dest }} symlink exists
+  file:
+    src: "{{ zim_symlink_src }}"
+    dest: "{{ zim_symlink_dest }}"
+    state: link
+
+#cd /var/tmp && /usr/local/bin/extract_zim --skip-link /var/tmp/wikipedia_en_for-schools_2013-01.zim
+#ipfs add -w -r --raw-leaves /var/tmp/out

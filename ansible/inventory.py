@@ -35,7 +35,7 @@ class ExampleInventory(object):
 
     # Example inventory for testing.
     def example_inventory(self):
-        f = open('ethereum_inventory.yaml')
+        f = open('ipfs_inventory.yaml')
         hosts = yaml.safe_load(f)
         f.close()
         return hosts

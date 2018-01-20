@@ -12,6 +12,12 @@
   register: node_installed
   ignore_errors: yes
 
+- name: Ensure additional build deps are present
+  apt:
+    name: "build-essential"
+    update_cache: yes
+    cache_valid_time: 3600
+
 - name: Download Node {{ nodejs_version }} Installer to {{ nodejs_tmp_dir }}/install_node{{ nodejs_version }}.sh when specified
   when: node_installed|failed
   get_url:
@@ -30,4 +36,3 @@
     name: "nodejs"
     update_cache: yes
     cache_valid_time: 3600
-    

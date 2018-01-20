@@ -1,10 +1,10 @@
 ---
 
-ethereum_nodes:
+ipfs_nodes:
   hosts:
-    - ethereum1.lan
-    - ethereum2.lan
-    - ethereum3.lan
+    - ipfs1.lan
+    - ipfs2.lan
+    - ipfs3.lan
   vars:
     ansible_ssh_user: vagrant
     ansible_ssh_private_key_file: "~/.vagrant.d/insecure_private_key"
@@ -12,15 +12,15 @@ ethereum_nodes:
 _meta:
   hostvars:
 
-    ethereum1.lan:
+    ipfs1.lan:
       vagrant_mem: 2048
       vagrant_ifaces:
         - ip: "172.16.1.11"
-    ethereum2.lan:
+    ipfs2.lan:
       vagrant_mem: 2048
       vagrant_ifaces:
         - ip: "172.16.1.12"
-    ethereum3.lan:
+    ipfs3.lan:
       vagrant_mem: 2048
       vagrant_ifaces:
         - ip: "172.16.1.13"

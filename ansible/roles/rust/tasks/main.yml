@@ -1,0 +1,8 @@
+---
+
+- name: Install Rust
+  become: yes
+  become_user: "{{ rust_become_user }}"
+  shell: "curl https://sh.rustup.rs -sSf | sh -s -- -y"
+  args:
+    creates: "$HOME/.cargo/env"

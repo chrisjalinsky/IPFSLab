@@ -1,4 +1,4 @@
-[ethereum_nodes]
-ethereum1.lan ansible_ssh_user=vagrant ansible_ssh_private_key_file="~/.vagrant.d/insecure_private_key"
-ethereum2.lan ansible_ssh_user=vagrant ansible_ssh_private_key_file="~/.vagrant.d/insecure_private_key"
-ethereum3.lan ansible_ssh_user=vagrant ansible_ssh_private_key_file="~/.vagrant.d/insecure_private_key"
+[ipfs_nodes]
+ipfs1.lan ansible_ssh_user=vagrant ansible_ssh_private_key_file="~/.vagrant.d/insecure_private_key"
+ipfs2.lan ansible_ssh_user=vagrant ansible_ssh_private_key_file="~/.vagrant.d/insecure_private_key"
+ipfs3.lan ansible_ssh_user=vagrant ansible_ssh_private_key_file="~/.vagrant.d/insecure_private_key"

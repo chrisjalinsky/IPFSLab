@@ -1,0 +1,12 @@
+---
+
+zim_user: "fuse"
+zim_git_repo: "https://github.com/dignifiedquire/zim.git"
+zim_git_version: "a283151105ab4c1905d7f5cb56fb8eb2a854ad67"
+zim_home: "/opt/zim"
+
+zim_bin_dir: "/usr/local/bin"
+zim_build_exec_cmd: "extract_zim"
+zim_build_release_dir: "{{ zim_home }}/target/release"
+zim_symlink_src: "{{ zim_build_release_dir }}/{{ zim_build_exec_cmd }}"
+zim_symlink_dest: "{{ zim_bin_dir }}/{{ zim_build_exec_cmd }}"

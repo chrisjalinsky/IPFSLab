@@ -1,7 +1,7 @@
 ---
 
 - name: Provision ipfs nodes
-  hosts: ethereum_nodes
+  hosts: ipfs_nodes
   become: yes
   become_user: root
   roles:
@@ -15,6 +15,10 @@
           groups:
             - "fuse"
           append: "yes"
+    # Wikipedia upload deps
+    - role: rust
+    - role: zim
+      zim_user: "fuse"
     # dependency install web ui and peerpad
     - role: nodejs
       nodejs_version: "7"
@@ -45,12 +49,12 @@
     - role: ipfs_swarm_keypull
       ipfs_swarm_keypull_user: "fuse"
       ipfs_swarm_keypull_ipfs_path: "/home/fuse/.ipfs"
-      ipfs_swarm_keypull_src: "http://{{ groups['ethereum_nodes'][0] }}:8083/swarm.key"
+      ipfs_swarm_keypull_src: "http://{{ groups['ipfs_nodes'][0] }}:8083/swarm.key"
     # Install and configure ipfs, but wait til bootstrapped to start
     - role: ipfs
       ipfs_api_listen_iface: "{{ hostvars[inventory_hostname]['ansible_enp0s8']['ipv4']['address']|default('0.0.0.0') }}"
       ipfs_gw_listen_iface: "{{ hostvars[inventory_hostname]['ansible_enp0s8']['ipv4']['address']|default('0.0.0.0') }}"
-      ipfs_swarm_list: "{{ hostvars|ipfs_format(groups['ethereum_nodes'],'ansible_enp0s8','4001') }}"
+      ipfs_swarm_list: "{{ hostvars|ipfs_format(groups['ipfs_nodes'],'ansible_enp0s8','4001') }}"
     # Has to be run after ipfs installed, so we can read custom facts from the created config file
     - role: ipfs_facts
       ipfs_facts_user: "fuse"
@@ -58,7 +62,7 @@
     #- role: ipfs_peerpad
     #  ipfs_peerpad_user: "fuse"
     #  ipfs_peerpad_gateway: "http://{{ inventory_hostname }}:8080/ipfs"
-    #  ipfs_peerpad_swarm_list: "{{ hostvars|ipfs_format(groups['ethereum_nodes'],'ansible_enp0s8','4001') }}"
+    #  ipfs_peerpad_swarm_list: "{{ hostvars|ipfs_format(groups['ipfs_nodes'],'ansible_enp0s8','4001') }}"
     - role: ipfs_webui
       ipfs_webui_user: "fuse"
       ipfs_webui_line_overrides_list:
@@ -81,7 +85,7 @@
     #- role: ethereum_contracts
 
 - name: Bootstrap all nodes with new ipfs facts
-  hosts: ethereum_nodes
+  hosts: ipfs_nodes
   become: yes
   become_user: root
   gather_facts: True
@@ -107,7 +111,7 @@
       become_user: "fuse"
       become: yes
       shell: "ipfs bootstrap add /ip4/{{ hostvars[item]['ansible_enp0s8']['ipv4']['address'] }}/tcp/4001/ipfs/{{ hostvars[item]['ansible_local']['ipfs']['ipfs_config']['Identity']['PeerID'] }}"
-      with_items: "{{ groups['ethereum_nodes'] }}"
+      with_items: "{{ groups['ipfs_nodes'] }}"
 
     - name: Ensure ipfs daemon started
       systemd:
