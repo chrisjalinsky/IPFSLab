@@ -1,0 +1,7 @@
+---
+
+zim_extract_exec: "/usr/local/bin/extract_zim"
+zim_extract_list: []
+#zim_extract_list:
+#  - dest: ""
+#    creates: "-/j/js_modules/site.js"

@@ -40,5 +40,5 @@
     dest: "{{ zim_symlink_dest }}"
     state: link
 
-#cd /var/tmp && /usr/local/bin/extract_zim --skip-link /var/tmp/wikipedia_en_for-schools_2013-01.zim
+#cd /var/tmp && sudo /usr/local/bin/extract_zim --skip-link /var/tmp/wikipedia_en_for-schools_2013-01.zim
 #ipfs add -w -r --raw-leaves /var/tmp/out

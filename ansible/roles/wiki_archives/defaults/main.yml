@@ -1,0 +1,12 @@
+---
+
+# expected to be an ipfs user
+wiki_archives_user: "fuse"
+
+wiki_archive_dl_dir: "/var/tmp/wikipedia"
+
+# download small archive - english maths no pics zim archive
+wiki_archive_dl_list:
+  - url: "http://download.kiwix.org/zim/wikipedia_en_medicine_nopic_nodet.zim"
+    dest: "{{ wiki_archive_dl_dir }}/wikipedia_en_medicine_nopic_nodet.zim"
+    mode: "0755"

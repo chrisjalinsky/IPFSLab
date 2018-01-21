@@ -1,0 +1,17 @@
+---
+
+- name: Ensure archive basedirs exist
+  file:
+    dest: "{{ item.dest | dirname }}"
+    state: directory
+    mode: "{{ item.mode|default('0755') }}"
+    owner: "{{ item.owner|default(wiki_archives_user) }}"
+  with_items: "{{ wiki_archive_dl_list }}"
+
+- name: Download wiki archives
+  get_url:
+    url: "{{ item.url }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode|default('0755') }}"
+    owner: "{{ item.owner|default(wiki_archives_user) }}"
+  with_items: "{{ wiki_archive_dl_list }}"

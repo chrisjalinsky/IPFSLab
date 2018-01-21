@@ -1,0 +1,6 @@
+---
+
+ipfs_cmd_user: "fuse"
+ipfs_cmd_list: []
+#ipfs_cmd_list:
+#  - cmd: ""

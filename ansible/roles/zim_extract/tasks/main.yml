@@ -1,0 +1,13 @@
+---
+
+- name: Extract zim with sudo
+  when: >
+    zim_extract_list is defined and
+    zim_extract_list|length > 0 and
+    item.dest is defined
+  become: yes
+  shell: "{{ zim_extract_exec }} --skip-link {{ item.dest }}"
+  args:
+    chdir: "{{ item.dest|dirname }}"
+    creates: "{{ item.dest|dirname }}/out/{{ item.creates|default('A/') }}"
+  with_items: "{{ zim_extract_list }}"

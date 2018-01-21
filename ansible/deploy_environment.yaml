@@ -8,3 +8,6 @@
 
 - name: Import provision ipfs bootstrap playbook
   import_playbook: provision_ipfs_bootstrap.yaml
+
+- name: Import provision ipfs wiki playbook
+  import_playbook: provision_ipfs_wiki.yaml

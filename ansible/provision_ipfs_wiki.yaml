@@ -1,0 +1,28 @@
+---
+
+- name: Provision DL and extract wiki on first node in ipfs_nodes group
+  hosts: ipfs_nodes[0]
+  become: yes
+  become_user: root
+  # Very important to gather new ipfs facts specified by provisioning
+  gather_facts: True
+  vars:
+    global_wiki_archive_dl_list:
+      - url: "http://download.kiwix.org/zim/wikipedia_en_medicine_nopic_nodet.zim"
+        dest: "/var/tmp/wikimed/wikipedia_en_medicine_nopic_nodet.zim"
+        mode: "0755"
+      - url: "http://download.kiwix.org/zim/wikipedia_en_maths_nodet.zim"
+        dest: "/var/tmp/wikimath/wikipedia_en_maths_nodet.zim"
+        mode: "0755"
+    global_ipfs_user: "fuse"
+  roles:
+    - role: wiki_archives
+      wiki_archives_user: "{{ global_ipfs_user }}"
+      wiki_archive_dl_list: "{{ global_wiki_archive_dl_list }}"
+    - role: zim_extract
+      zim_extract_list: "{{ global_wiki_archive_dl_list }}"
+    - role: ipfs_cmd
+      ipfs_cmd_user: "{{ global_ipfs_user }}"
+      ipfs_cmd_list:
+        - cmd: "ipfs add -w -r --raw-leaves /var/tmp/wikimath/out &> /tmp/wikimath.out"
+        - cmd: "ipfs add -w -r --raw-leaves /var/tmp/wikimed/out &> /tmp/wikimed.out"

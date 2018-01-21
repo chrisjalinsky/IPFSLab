@@ -1,0 +1,11 @@
+---
+
+- name: IPFS cmd list (may take time)
+  register: ipfs_cmd_registration
+  become: yes
+  become_user: "{{ ipfs_cmd_user }}"
+  shell: "{{ item.cmd }}"
+  args:
+    executable: "/bin/bash"
+    creates: "{{ item.creates | default(omit) }}"
+  with_items: "{{ ipfs_cmd_list }}"

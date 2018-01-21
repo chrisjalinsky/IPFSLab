@@ -45,13 +45,13 @@ Uses the box ```bento/ubuntu-16.04``` by default. This could be any flavor of Ub
 The deploy script runs the following playbook with a psuedo-dynamic inventory:
 ```
 cd ansible
-ansible-playbook provision_ipfs.yaml -i inventory.py
+ansible-playbook deploy_environment.yaml -i inventory.py
 ```
 
 #### ipfs_swarm_keygen role
 Installs go library for creating a private swarm key. Additionally installs Nginx to expose the key. This should be shared more securely, but not for this lab exercise.
 
-Additionally, the role creates a secure nginx server for the NodeJS app.
+Additionally, the role creates a secure nginx server for the NodeJS apps.
 
 #### ipfs_facts role
 Creates custom ansible fact for ipfs on the remote nodes, by reading the JSON created by ipfs. View the fact:
