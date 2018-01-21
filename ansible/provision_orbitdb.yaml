@@ -1,0 +1,13 @@
+---
+
+- name: Provision OrbitDB
+  hosts: ipfs_nodes
+  become: yes
+  become_user: root
+  # Very important to gather new ipfs facts specified by provisioning
+  gather_facts: True
+  roles:
+    - role: orbitdb
+      orbitdb_user: "fuse"
+      orbitdb_ipfs_path: "/home/fuse/.ipfs"
+      orbitdb_ipfs_bootstrap_nodelist: "{{ groups['ipfs_nodes'] }}"

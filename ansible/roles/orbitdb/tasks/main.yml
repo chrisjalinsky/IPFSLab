@@ -1,0 +1,13 @@
+---
+
+- name: Ensure global npm packages installed
+  become: yes
+  npm:
+    name: "{{ item.name }}"
+    global: "yes"
+  with_items: "{{ orbitdb_global_npm_package_list }}"
+
+- name: Test OrbitDB as {{ orbitdb_user }} user
+  become: yes
+  become_user: "{{ orbitdb_user }}"
+  shell: "IPFS_PATH={{ orbitdb_ipfs_path }} orbitdb"

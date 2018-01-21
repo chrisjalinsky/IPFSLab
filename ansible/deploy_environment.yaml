@@ -1,0 +1,10 @@
+---
+
+- name: Import provision hostsfile playbook
+  import_playbook: provision_hostsfile.yaml
+
+- name: Import provision ipfs playbook
+  import_playbook: provision_ipfs.yaml
+
+- name: Import provision ipfs bootstrap playbook
+  import_playbook: provision_ipfs_bootstrap.yaml

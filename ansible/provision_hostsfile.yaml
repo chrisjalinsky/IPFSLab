@@ -1,0 +1,10 @@
+---
+
+- name: Provision ipfs nodes hostsfile
+  hosts: ipfs_nodes
+  become: yes
+  become_user: root
+  roles:
+    - role: hostsfile
+      hostsfile_iface: "ansible_enp0s8"
+      hostsfile_group: "all"

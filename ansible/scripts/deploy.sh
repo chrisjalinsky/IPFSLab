@@ -17,4 +17,4 @@ vagrant up
 echo "Sleep for short time while VM ethernet interfaces are set up..."
 sleep 15
 echo "Resuming..."
-ansible-playbook provision_ipfs.yaml -i inventory.py || true
+ansible-playbook deploy_environment.yaml -i inventory.py || true

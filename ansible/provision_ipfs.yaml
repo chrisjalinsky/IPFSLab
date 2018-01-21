@@ -1,13 +1,10 @@
 ---
 
-- name: Provision ipfs nodes
+- name: Provision ipfs user, ipfs tools and ipfs software
   hosts: ipfs_nodes
   become: yes
   become_user: root
   roles:
-    - role: hostsfile
-      hostsfile_iface: "ansible_enp0s8"
-      hostsfile_group: "all"
     - role: user_role
       user_role_users:
         - name: "fuse"
@@ -21,7 +18,7 @@
       zim_user: "fuse"
     # dependency install web ui and peerpad
     - role: nodejs
-      nodejs_version: "7"
+      nodejs_version: "8"
     - role: go
       go_user: "fuse"
       go_version: "1.9.2"
@@ -83,51 +80,3 @@
           dest: "/opt/ipfs_webui_vmaster/src/app/js/services/api.js"
     #- role: ethereum
     #- role: ethereum_contracts
-
-- name: Bootstrap all nodes with new ipfs facts
-  hosts: ipfs_nodes
-  become: yes
-  become_user: root
-  gather_facts: True
-  tasks:
-
-    - name: Remove all bootstrap peers (move to ipfs config)
-      become_user: "fuse"
-      become: yes
-      shell: "ipfs bootstrap rm --all"
-
-    - name: IPFS bootstrap with custom facts
-      when: >
-        hostvars is defined and
-        hostvars[item] is defined and
-        hostvars[item]['ansible_local'] is defined and
-        hostvars[item]['ansible_local']['ipfs'] is defined and
-        hostvars[item]['ansible_local']['ipfs']['ipfs_config'] is defined and
-        hostvars[item]['ansible_local']['ipfs']['ipfs_config']['Identity'] is defined and
-        hostvars[item]['ansible_local']['ipfs']['ipfs_config']['Identity']['PeerID'] is defined and
-        hostvars[item]['ansible_enp0s8'] is defined and
-        hostvars[item]['ansible_enp0s8']['ipv4'] is defined and
-        hostvars[item]['ansible_enp0s8']['ipv4']['address'] is defined
-      become_user: "fuse"
-      become: yes
-      shell: "ipfs bootstrap add /ip4/{{ hostvars[item]['ansible_enp0s8']['ipv4']['address'] }}/tcp/4001/ipfs/{{ hostvars[item]['ansible_local']['ipfs']['ipfs_config']['Identity']['PeerID'] }}"
-      with_items: "{{ groups['ipfs_nodes'] }}"
-
-    - name: Ensure ipfs daemon started
-      systemd:
-        name: "ipfs-svc"
-        daemon_reload: yes
-        state: started
-
-    #- name: Wait for default ipfs ports to come up
-    #  wait_for:
-    #    host: "{{ item.host }}"
-    #    port: "{{ item.port }}"
-    #    #delay: 10
-    #  with_items:
-    #    - port: "4001"
-    #      host: "0.0.0.0"
-    #    - port: "5001"
-    #      host: "127.0.0.1"
-    #    - port: "8080"
-    #      host: "127.0.0.1"

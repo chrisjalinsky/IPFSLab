@@ -1,15 +1,18 @@
-# Overview of IPFSLab
-The deploy script will configure a 3 node Ubuntu 16 IPFS private network. The goal is to keep all IPFS functionality contained within a private subnet.
+# Overview of IPFS Lab
+The deploy script will configure a 3 node Ubuntu 16 IPFS private network. The goal is to keep all IPFS functionality initially contained within a private subnet.
+
+For example, you want to run a private distributed application. At a future date, you open it up to public, by exposing the gateways and adding peers.
 
 **Hosts:**
-* ethereum1.lan
-* ethereum2.lan
-* ethereum3.lan
+* ipfs1.lan
+* ipfs2.lan
+* ipfs3.lan
 
 Additional blockchain tools and projects will be installed alongside the IPFS project including:
 * [IPFS Peerpad](https://github.com/ipfs-shipyard/peerpad) - Awesome shared realtime NodeJS app utilizing ipfs.
 * [IPFS WebUI](https://github.com/ipfs-shipyard/ipfs-webui) - Awesome frontend NodeJS app for ipfs.
 * [Ethereum](https://ethereum.org/)
+* [Rust](https://www.rust-lang.org/en-US/install.html) - Used for extracting ZIM archives, which we we import wikipedia to our local IPFS
 
 ### REQUIRED SOFTWARE
 
@@ -66,9 +69,9 @@ The default install creates a NodeJS app which connects to the public IPFS swarm
 
 The web address to connect to the WebUIs:
 ```
-https://ethereum1.lan/#/
-https://ethereum2.lan/#/
-https://ethereum3.lan/#/
+http://ipfs1.lan/
+http://ipfs2.lan/
+http://ipfs3.lan/
 ```
 
 ## Additional Details

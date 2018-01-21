@@ -1,0 +1,45 @@
+---
+
+- name: Remove all bootstrap peers (move to ipfs config)
+  become_user: "{{ ipfs_bootstrap_user }}"
+  become: yes
+  shell: "ipfs bootstrap rm --all"
+
+- name: IPFS bootstrap with custom facts
+  when: >
+    hostvars is defined and
+    hostvars[item] is defined and
+    hostvars[item]['ansible_local'] is defined and
+    hostvars[item]['ansible_local']['ipfs'] is defined and
+    hostvars[item]['ansible_local']['ipfs']['ipfs_config'] is defined and
+    hostvars[item]['ansible_local']['ipfs']['ipfs_config']['Identity'] is defined and
+    hostvars[item]['ansible_local']['ipfs']['ipfs_config']['Identity']['PeerID'] is defined and
+    hostvars[item]['ansible_enp0s8'] is defined and
+    hostvars[item]['ansible_enp0s8']['ipv4'] is defined and
+    hostvars[item]['ansible_enp0s8']['ipv4']['address'] is defined
+  become_user: "{{ ipfs_bootstrap_user }}"
+  become: yes
+  shell: "ipfs bootstrap add /ip4/{{ hostvars[item]['ansible_enp0s8']['ipv4']['address'] }}/tcp/4001/ipfs/{{ hostvars[item]['ansible_local']['ipfs']['ipfs_config']['Identity']['PeerID'] }}"
+  with_items: "{{ ipfs_bootstrap_nodelist }}"
+
+- name: Ensure ipfs daemon started
+  systemd:
+    name: "ipfs-svc"
+    daemon_reload: yes
+    state: started
+
+- name: Set Gateway fact (default to localhost)
+  set_fact:
+    ipfs_bootstrap_fact_api_addr: "{{ hostvars[inventory_hostname]['ansible_local']['ipfs']['ipfs_config']['Addresses']['API'] | default('/ip4/127.0.0.1/tcp/5001') }}"
+    ipfs_bootstrap_fact_gw_addr: "{{ hostvars[inventory_hostname]['ansible_local']['ipfs']['ipfs_config']['Addresses']['Gateway'] | default('/ip4/127.0.0.1/tcp/8080') }}"
+
+- name: Wait for specified ipfs ports to come up
+  wait_for:
+    host: "{{ item.host }}"
+    port: "{{ item.port }}"
+  with_items:
+    # regex needs double escaped
+    - host: "{{ ipfs_bootstrap_fact_api_addr|regex_replace('\\/(.+)\\/(.+)\\/(.+)\\/(.+)','\\2') }}"
+      port: "{{ ipfs_bootstrap_fact_api_addr|regex_replace('\\/(.+)\\/(.+)\\/(.+)\\/(.+)','\\4') }}"
+    - host: "{{ ipfs_bootstrap_fact_gw_addr|regex_replace('\\/(.+)\\/(.+)\\/(.+)\\/(.+)','\\2') }}"
+      port: "{{ ipfs_bootstrap_fact_gw_addr|regex_replace('\\/(.+)\\/(.+)\\/(.+)\\/(.+)','\\4') }}"

@@ -1,0 +1,9 @@
+---
+
+
+orbitdb_global_npm_package_list:
+  - name: "orbit-db-cli"
+
+orbitdb_user: "fuse"
+orbitdb_ipfs_path: "/home/fuse/.ipfs"
+orbitdb_ipfs_bootstrap_nodelist: []

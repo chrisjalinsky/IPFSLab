@@ -1,0 +1,5 @@
+---
+
+ipfs_bootstrap_user: "fuse"
+ipfs_bootstrap_nodelist: "{{ groups['ipfs_nodes']|default([]) }}"
+ipfs_bootstrap_path: "/home/fuse/.ipfs"
