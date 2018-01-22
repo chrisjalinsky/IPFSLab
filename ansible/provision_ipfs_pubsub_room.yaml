@@ -1,0 +1,11 @@
+---
+
+- name: Create Pubsub room
+  hosts: ipfs_nodes
+  become: yes
+  become_user: root
+  # Very important to gather new facts specified by provisioning
+  gather_facts: True
+  roles:
+    - role: ipfs_pubsub_room
+      ipfs_pubsub_room_user: "fuse"

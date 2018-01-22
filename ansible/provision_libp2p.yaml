@@ -1,0 +1,13 @@
+---
+
+- name: Network libp2p services running on ipfs nodes
+  hosts: ipfs_nodes
+  become: yes
+  become_user: root
+  roles:
+    - role: sysctl
+    - role: libp2p_wss
+      libp2p_wss_user: "fuse"
+      libp2p_wss_ipfs_path: "/home/fuse/.ipfs"
+      libp2p_wss_listen_addr: "{{ hostvars[inventory_hostname]['ansible_enp0s8']['ipv4']['address'] }}"
+      libp2p_wss_listen_port: "9090"

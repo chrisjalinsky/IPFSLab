@@ -1,0 +1,12 @@
+[Unit]
+Description=Libp2p service
+Documentation=https://github.com/libp2p/js-libp2p-websocket-star-rendezvous
+
+[Service]
+User={{ libp2p_wss_user }}
+ExecStart={{ libp2p_rendezvous_exec }}
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

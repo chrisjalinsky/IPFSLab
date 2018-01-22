@@ -1,0 +1,20 @@
+---
+
+- name: Ensure global npm packages installed
+  become: yes
+  become_user: "{{ libp2p_wss_user }}"
+  shell: "sudo npm install -g {{ item.name }}"
+  args:
+    executable: "/bin/bash"
+  with_items: "{{ libp2p_wss_global_npm_package_list }}"
+
+- name: Ensure rendezvous-svc template present
+  template:
+    src: "rendezvous-svc.service.j2"
+    dest: "/etc/systemd/system/rendezvous-svc.service"
+
+- name: Ensure rendezvous-svc daemon started
+  systemd:
+    name: "rendezvous-svc"
+    daemon_reload: yes
+    state: started

@@ -1,0 +1,16 @@
+---
+
+
+libp2p_wss_global_npm_package_list:
+  - name: "libp2p-websocket-star-rendezvous"
+  - name: "libp2p-websocket-star"
+
+libp2p_wss_user: "fuse"
+libp2p_wss_ipfs_path: "/home/fuse/.ipfs"
+#libp2p_wss_ipfs_bootstrap_nodelist: []
+
+libp2p_wss_listen_addr: "0.0.0.0"
+libp2p_wss_listen_port: "9090"
+
+libp2p_rendezvous_exec: "/usr/bin/rendezvous --port={{ libp2p_wss_listen_port }} --host={{ libp2p_wss_listen_addr }}"
+libp2p_wss_exec: "websockets-star --port={{ libp2p_wss_listen_port }} --host={{ libp2p_wss_listen_addr }}"

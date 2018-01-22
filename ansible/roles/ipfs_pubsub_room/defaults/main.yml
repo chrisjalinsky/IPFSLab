@@ -1,0 +1,26 @@
+---
+
+ipfs_pubsub_room_git_repo: "https://github.com/ipfs-labs/ipfs-pubsub-room-demo.git"
+ipfs_pubsub_room_git_branch: "master"
+ipfs_pubsub_room_parent_dir: "/opt"
+ipfs_pubsub_room_home_dir: "{{ ipfs_pubsub_room_parent_dir }}/ipfs_pubsub_room_v{{ ipfs_pubsub_room_git_branch }}"
+ipfs_pubsub_room_user: "fuse"
+
+# If you need to override the source code
+ipfs_pubsub_room_overrides_list: []
+#ipfs_webui_line_overrides_list:
+#  - line: "const host = '172.16.1.11'"
+#    regexp: "^\\s+const\\s+host\\s+=.*"
+#    dest: "{{ ipfs_webui_home_dir }}/src/app/js/components/ipfs.js"
+#  - line: "const port = '5001'"
+#    regexp: "^\\s+const\\s+port\\s+=.*"
+#    dest: "{{ ipfs_webui_home_dir }}/src/app/js/components/ipfs.js"
+#  - line: "let gateway = '//172.16.1.11:8080'"
+#    regexp: "^\\s+let\\s+gateway\\s+=.*"
+#    dest: "{{ ipfs_webui_home_dir }}/src/app/js/components/ipfs.js"
+#  - line: "const host = '172.16.1.11'"
+#    regexp: "^\\s+const\\s+host\\s+=.*"
+#    dest: "{{ ipfs_webui_home_dir }}/src/app/js/services/api.js"
+#  - line: "const port = '5001'"
+#    regexp: "^\\s+const\\s+port\\s+=.*"
+#    dest: "{{ ipfs_webui_home_dir }}/src/app/js/services/api.js"
